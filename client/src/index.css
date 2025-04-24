@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 13%; /* #202123 */
+  --muted: 220 14% 97%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 13%;
+  --border: 220 13% 91%; /* #E5E7EB */
+  --input: 220 13% 91%;
+  --primary: 160 82% 35%; /* #10A37F */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 28%; /* #40414F */
+  --secondary-foreground: 0 0% 100%;
+  --accent: 0 0% 97%;  /* #F7F7F8 */
+  --accent-foreground: 0 0% 13%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 160 82% 35%;
+  --radius: 0.5rem;
+  --message-bg: 0 0% 97%; /* #F7F7F8 */
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 160 82% 35%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+.message-user {
+  @apply bg-primary text-white p-4 rounded-lg max-w-3xl;
+}
+
+.message-ai {
+  @apply bg-[#F7F7F8] p-4 rounded-lg;
+}
+
+.prose h3 {
+  @apply text-lg font-semibold mt-4 mb-2;
+}
+
+.prose ul {
+  @apply list-disc pl-6 my-2;
+}
+
+.prose pre {
+  @apply bg-gray-100 p-3 rounded-lg my-4 overflow-x-auto;
+}
+
+.prose code {
+  @apply text-sm font-mono;
+}
+
+.prose p {
+  @apply my-2;
+}
+
+.prose img {
+  @apply w-full rounded my-4;
+}
+
+/* Auto-resize textarea */
+.auto-resize-textarea {
+  resize: none;
+  overflow-y: hidden;
+}

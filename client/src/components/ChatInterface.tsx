@@ -72,8 +72,16 @@ export default function ChatInterface() {
     }
   });
 
-  const handleSendMessage = (content: string) => {
-    sendMessage(content);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  const handleSendMessage = (content: string, imageFile?: File) => {
+    if (imageFile) {
+      setSelectedImage(imageFile);
+      sendMessage(content, imageFile);
+    } else {
+      setSelectedImage(null);
+      sendMessage(content);
+    }
   };
 
   const toggleSystemPrompt = () => {

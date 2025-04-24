@@ -122,11 +122,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ message: "OpenAI API key is not configured" });
       }
       
-      // Format messages for OpenAI API
-      const formattedMessages = [
-        { role: 'system' as const, content: systemPrompt || "" },
-        ...messages.map(m => ({ role: m.role as 'user' | 'assistant' | 'system', content: m.content }))
-      ];
+      // Check if there's an image in the request
+      const hasAttachment = req.body.hasAttachment || false;
+      let formattedMessages = [];
+      
+      if (hasAttachment) {
+        // Find the message with image attachment
+        const imageMessage = messages.find(msg => msg.hasImage);
+        
+        if (imageMessage && imageMessage.imageData) {
+          console.log("Image attachment detected, using multimodal capabilities");
+          
+          // Create a multimodal message with text and image content
+          formattedMessages = [
+            { role: 'system' as const, content: systemPrompt || "" },
+            ...messages.slice(0, -1).map(m => ({ 
+              role: m.role as 'user' | 'assistant' | 'system', 
+              content: m.content 
+            })),
+            { 
+              role: 'user' as const, 
+              content: [
+                { 
+                  type: "text", 
+                  text: imageMessage.content 
+                },
+                { 
+                  type: "image_url", 
+                  image_url: { 
+                    url: `data:image/jpeg;base64,${imageMessage.imageData}`
+                  } 
+                }
+              ]
+            }
+          ];
+        } else {
+          console.error("Image attachment expected but not found in messages");
+          return res.status(400).json({ message: "Image data missing" });
+        }
+      } else {
+        // Regular text-only messages
+        formattedMessages = [
+          { role: 'system' as const, content: systemPrompt || "" },
+          ...messages.map(m => ({ 
+            role: m.role as 'user' | 'assistant' | 'system', 
+            content: m.content 
+          }))
+        ];
+      }
       
       console.log("Sending request to OpenAI with message count:", formattedMessages.length);
       
@@ -135,6 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         model: "gpt-4o", // Using the latest model
         messages: formattedMessages,
         temperature: 0.7,
+        max_tokens: 1500 // Set a reasonable limit
       });
       
       console.log("Received response from OpenAI");

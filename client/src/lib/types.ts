@@ -5,6 +5,8 @@ export interface Message {
   timestamp: Date;
   tokenCount?: number;
   costInInr?: number;
+  hasImage?: boolean;
+  imageData?: string;
 }
 
 export interface SystemPrompt {

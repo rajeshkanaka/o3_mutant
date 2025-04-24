@@ -53,8 +53,39 @@ Respond using this template unless the user specifies another:
 **Next Actions (optional)** – What the user can do next.  
 **Citations** – Inline, using "cite" tags if a web source was used.`;
 
-export async function sendChatMessage(messages: Message[], systemPrompt: string): Promise<ChatCompletionResponse> {
+export async function sendChatMessage(
+  messages: Message[], 
+  systemPrompt: string, 
+  imageFile?: File
+): Promise<ChatCompletionResponse> {
   try {
+    // Handle messages with image attachments
+    if (imageFile) {
+      // Convert the image to a base64 string
+      const base64Image = await fileToBase64(imageFile);
+      
+      // Create a special message with both text and image
+      const lastMessage = messages[messages.length - 1];
+      const messagesWithImage = messages.slice(0, -1);
+      
+      // Add the last message with the image attachment
+      messagesWithImage.push({
+        ...lastMessage,
+        hasImage: true,
+        imageData: base64Image
+      });
+      
+      return await apiRequest<ChatCompletionResponse>('/api/chat', {
+        method: 'POST',
+        body: {
+          messages: messagesWithImage,
+          systemPrompt,
+          hasAttachment: true
+        }
+      });
+    }
+    
+    // Regular text-only messages
     return await apiRequest<ChatCompletionResponse>('/api/chat', {
       method: 'POST',
       body: {
@@ -69,6 +100,23 @@ export async function sendChatMessage(messages: Message[], systemPrompt: string)
     console.error("Error sending chat message:", error);
     throw error;
   }
+}
+
+/**
+ * Converts a file to a base64 string
+ */
+export const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Extract the base64 part from the data URL
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = error => reject(error);
+  });
 }
 
 export function parseAIResponse(content: string): ParsedAIResponse {

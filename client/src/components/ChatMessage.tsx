@@ -2,6 +2,7 @@ import { Message, ParsedAIResponse } from "@/lib/types";
 import { parseAIResponse } from "@/lib/openai";
 import { estimateTokenCount, calculateTokenCostInINR, formatTokenCost } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
+import logoImage from "../assets/logo.png";
 
 interface ChatMessageProps {
   message: Message;
@@ -32,7 +33,7 @@ const UserMessage = ({ message }: { message: Message }) => {
 const AIAvatar = () => (
   <div className="w-8 h-8 rounded-full overflow-hidden">
     <img 
-      src="/client/public/images/logo.png" 
+      src={logoImage} 
       alt="Astra O3 Avatar" 
       className="w-full h-full object-cover"
     />

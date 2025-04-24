@@ -13,21 +13,21 @@ export default function Navigation() {
         
         <div className="flex space-x-4">
           <Link href="/">
-            <a className={`flex items-center space-x-1 px-3 py-2 rounded-md ${
+            <div className={`flex items-center space-x-1 px-3 py-2 rounded-md cursor-pointer ${
               location === "/" ? "bg-secondary font-medium" : "hover:bg-secondary/50"
             }`}>
               <MessageSquare className="h-4 w-4" />
               <span>Chat</span>
-            </a>
+            </div>
           </Link>
           
           <Link href="/github">
-            <a className={`flex items-center space-x-1 px-3 py-2 rounded-md ${
+            <div className={`flex items-center space-x-1 px-3 py-2 rounded-md cursor-pointer ${
               location === "/github" ? "bg-secondary font-medium" : "hover:bg-secondary/50"
             }`}>
               <Github className="h-4 w-4" />
               <span>GitHub</span>
-            </a>
+            </div>
           </Link>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { FaCog } from "react-icons/fa";
+import logoImage from "../assets/logo.png";
 
 interface ChatHeaderProps {
   toggleSystemPrompt: () => void;
@@ -10,7 +11,7 @@ export default function ChatHeader({ toggleSystemPrompt }: ChatHeaderProps) {
     <header className="border-b border-border px-4 py-3 flex justify-between items-center bg-white shadow-sm z-10">
       <div className="flex items-center">
         <img 
-          src="/images/logo.png" 
+          src={logoImage} 
           alt="Astra O3 Logo" 
           className="h-10 mr-2"
         />

@@ -85,7 +85,7 @@ export default function FileChangesManager() {
   // Delete file change
   const deleteFileChangeMutation = useMutation({
     mutationFn: (id: number) => 
-      apiRequest(`/api/github/files/${id}`, { method: 'DELETE' }),
+      apiRequest<void>(`/api/github/files/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ 
         queryKey: ['/api/github/repositories', selectedRepository, 'files'] 
@@ -206,7 +206,11 @@ export default function FileChangesManager() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => window.open(change.commitUrl, '_blank')}
+                                onClick={() => {
+                                  if (typeof change.commitUrl === 'string') {
+                                    window.open(change.commitUrl, '_blank');
+                                  }
+                                }}
                               >
                                 <ExternalLink className="h-4 w-4" />
                                 <span className="ml-1">View Commit</span>

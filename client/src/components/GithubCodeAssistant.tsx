@@ -61,10 +61,9 @@ export default function GithubCodeAssistant() {
   // Function to generate AI assistance
   const generateAssistanceMutation = useMutation({
     mutationFn: (data: { repositoryId: number; prompt: string }) => 
-      apiRequest('/api/github/assist', {
+      apiRequest<CodeAssistanceResponse>('/api/github/assist', {
         method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
+        body: data
       }),
     onMutate: () => {
       setIsGenerating(true);
@@ -93,10 +92,9 @@ export default function GithubCodeAssistant() {
   // Function to save file changes to database
   const saveFileChangesMutation = useMutation({
     mutationFn: (data: { repositoryId: number; changes: { path: string; content: string; commitMessage: string }[] }) => 
-      apiRequest(`/api/github/repositories/${data.repositoryId}/files`, {
+      apiRequest<GithubFileChange[]>(`/api/github/repositories/${data.repositoryId}/files`, {
         method: 'POST',
-        body: JSON.stringify({ changes: data.changes }),
-        headers: { 'Content-Type': 'application/json' }
+        body: { changes: data.changes }
       }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ 
@@ -108,9 +106,9 @@ export default function GithubCodeAssistant() {
         description: 'Code changes have been saved. You can review and commit them in the Pending Changes tab.',
       });
       
-      // If changes include a commit URL, open it
-      if (data.commitUrl) {
-        window.open(data.commitUrl, '_blank');
+      // If the first file change exists and has a commit URL, open it
+      if (data && data.length > 0 && typeof data[0] === 'object' && 'commitUrl' in data[0] && typeof data[0].commitUrl === 'string') {
+        window.open(data[0].commitUrl, '_blank');
       }
     },
     onError: (error: any) => {

@@ -5,8 +5,8 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>O3 Chat Interface</title>
-        <meta name="description" content="Chat interface for OpenAI's O3 model" />
+        <title>Astra o3 by Rajesh</title>
+        <meta name="description" content="Chat interface for OpenAI's O3 model by Rajesh" />
       </Helmet>
       <ChatInterface />
     </>

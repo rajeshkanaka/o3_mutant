@@ -10,7 +10,7 @@ export default function LoadingIndicator() {
           </div>
         </div>
         <div className="flex-1">
-          <div className="font-medium mb-2">Astra (O3)</div>
+          <div className="font-medium mb-2">Astra o3 by Rajesh</div>
           <div className="flex items-center">
             <div className="mr-3">Thinking</div>
             <div className="flex space-x-2">

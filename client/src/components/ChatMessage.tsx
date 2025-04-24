@@ -25,6 +25,28 @@ const AIAvatar = () => (
 const AIMessage = ({ content }: { content: string }) => {
   const parsedResponse = parseAIResponse(content);
   
+  // Estimate token count (rough approximation)
+  const estimateTokenCount = (text: string) => {
+    // Rough approximation: 1 token ≈ 4 characters for English text
+    return Math.ceil(text.length / 4);
+  };
+  
+  // Calculate estimated cost in INR (based on April 2024 rates)
+  // gpt-4o input: $0.01/1K tokens, output: $0.03/1K tokens
+  // Converting to INR with approximate rate of 1 USD = 83 INR
+  const calculateCost = (tokenCount: number, isInput: boolean = false) => {
+    const ratePerThousandTokens = isInput ? 0.01 : 0.03; // USD per 1K tokens
+    const usdToInr = 83; // Approximate conversion rate
+    return ((tokenCount / 1000) * ratePerThousandTokens * usdToInr).toFixed(2);
+  };
+  
+  const tokenCount = estimateTokenCount(content);
+  const costInInr = calculateCost(tokenCount);
+  
+  const copyToClipboard = (text: string, isMarkdown: boolean = false) => {
+    navigator.clipboard.writeText(text);
+  };
+  
   // Fallback to displaying raw content if parsing fails
   if (!parsedResponse.answer && !parsedResponse.steps?.length) {
     return (
@@ -34,15 +56,47 @@ const AIMessage = ({ content }: { content: string }) => {
             <AIAvatar />
           </div>
           <div className="flex-1">
-            <div className="font-medium mb-2">Astra (O3)</div>
+            <div className="font-medium mb-2 flex items-center justify-between">
+              <span>Astra o3 by Rajesh</span>
+              <div className="flex items-center space-x-2">
+                <button 
+                  onClick={() => copyToClipboard(content)}
+                  className="text-xs px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+                  title="Copy formatted text"
+                >
+                  Copy
+                </button>
+                <button 
+                  onClick={() => copyToClipboard(content, true)}
+                  className="text-xs px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+                  title="Copy as markdown"
+                >
+                  Copy as MD
+                </button>
+              </div>
+            </div>
             <div className="prose prose-sm max-w-none">
               <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
+            <div className="text-xs text-gray-500 mt-3">
+              ~{tokenCount} tokens · ₹{costInInr} INR
             </div>
           </div>
         </div>
       </div>
     );
   }
+  
+  // Combine all content for token counting
+  const fullContent = [
+    parsedResponse.answer,
+    parsedResponse.steps?.join(' '),
+    parsedResponse.nextActions,
+    parsedResponse.citations
+  ].filter(Boolean).join(' ');
+  
+  const fullTokenCount = estimateTokenCount(fullContent);
+  const fullCostInInr = calculateCost(fullTokenCount);
   
   return (
     <div className="message-ai">
@@ -51,7 +105,25 @@ const AIMessage = ({ content }: { content: string }) => {
           <AIAvatar />
         </div>
         <div className="flex-1">
-          <div className="font-medium mb-2">Astra (O3)</div>
+          <div className="font-medium mb-2 flex items-center justify-between">
+            <span>Astra o3 by Rajesh</span>
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => copyToClipboard(content)}
+                className="text-xs px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+                title="Copy formatted text"
+              >
+                Copy
+              </button>
+              <button 
+                onClick={() => copyToClipboard(content, true)}
+                className="text-xs px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+                title="Copy as markdown"
+              >
+                Copy as MD
+              </button>
+            </div>
+          </div>
           <div className="prose prose-sm max-w-none">
             {parsedResponse.answer && (
               <>
@@ -86,6 +158,9 @@ const AIMessage = ({ content }: { content: string }) => {
                 </p>
               </>
             )}
+          </div>
+          <div className="text-xs text-gray-500 mt-3">
+            ~{fullTokenCount} tokens · ₹{fullCostInInr} INR
           </div>
         </div>
       </div>

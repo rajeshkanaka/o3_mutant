@@ -84,7 +84,10 @@ export default function ChatInput({ onSendMessage, disabled = false }: ChatInput
         </form>
         <div className="text-xs text-gray-500 mt-2 flex justify-between">
           <span>O3 models may produce inaccurate information or display harmful content.</span>
-          <a href="https://openai.com/pricing" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">API Pricing</a>
+          <div className="flex space-x-3">
+            <span>Pricing: ~₹0.83 INR per 1K input tokens, ~₹2.49 INR per 1K output tokens</span>
+            <a href="https://openai.com/pricing" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">API Pricing</a>
+          </div>
         </div>
       </div>
     </div>

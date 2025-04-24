@@ -14,7 +14,7 @@ export default function ChatHeader({ toggleSystemPrompt }: ChatHeaderProps) {
           <path d="M12 17V15" stroke="white" strokeWidth="2" strokeLinecap="round" />
           <path d="M12 13C12 11.9 12.9 11 14 11C15.1 11 16 10.1 16 9C16 7.9 15.1 7 14 7H10C8.9 7 8 7.9 8 9" stroke="white" strokeWidth="2" strokeLinecap="round" />
         </svg>
-        <h1 className="text-lg font-semibold">O3 Chat Interface</h1>
+        <h1 className="text-lg font-semibold">Astra o3 by Rajesh</h1>
       </div>
       <Button 
         variant="ghost" 

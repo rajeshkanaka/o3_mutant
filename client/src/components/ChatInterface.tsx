@@ -15,7 +15,7 @@ export default function ChatInterface() {
     {
       id: uuidv4(),
       role: 'assistant',
-      content: "Hello! I'm Astra, built on OpenAI's O3 model. I'm designed to solve complex, multi-step tasks with clear reasoning and effective tool use. How can I help you today?",
+      content: "Hello! I'm Astra o3 by Rajesh, built on OpenAI's O3 model. I'm designed to solve complex, multi-step tasks with clear reasoning and effective tool use. How can I help you today?",
       timestamp: new Date()
     }
   ]);

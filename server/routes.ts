@@ -5,6 +5,7 @@ import { insertChatSessionSchema, insertMessageSchema, insertSystemPromptSchema 
 import { v4 as uuidv4 } from "uuid";
 import OpenAI from "openai";
 import { z } from "zod";
+import { registerGithubRoutes } from "./github-routes";
 
 // Default system prompt (copied from client to avoid import issues)
 const defaultSystemPrompt = `# ===================== 1. ROLE & OBJECTIVE =====================
@@ -317,6 +318,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ message: "Failed to delete system prompt" });
     }
   });
+
+  // Register GitHub API routes
+  registerGithubRoutes(app);
 
   const httpServer = createServer(app);
 

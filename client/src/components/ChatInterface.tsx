@@ -30,21 +30,30 @@ export default function ChatInterface() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Define a type for the mutation input
+  type SendMessageInput = {
+    content: string;
+    imageFile?: File;
+  };
+
   const { mutate: sendMessage, isPending } = useMutation({
-    mutationFn: async (content: string) => {
+    mutationFn: async (input: SendMessageInput) => {
+      const { content, imageFile } = input;
+      
       // First add the user message to the UI
       const userMessage: Message = {
         id: uuidv4(),
         role: 'user',
         content,
-        timestamp: new Date()
+        timestamp: new Date(),
+        hasImage: !!imageFile
       };
       
       setMessages(prevMessages => [...prevMessages, userMessage]);
       
       // Then send messages to API and get response
       const messagesForAPI = [...messages, userMessage];
-      const response = await sendChatMessage(messagesForAPI, systemPrompt);
+      const response = await sendChatMessage(messagesForAPI, systemPrompt, imageFile);
       
       // Add AI response to messages with token usage information
       const completionTokens = response.usage?.completion_tokens || estimateTokenCount(response.choices[0].message.content);
@@ -77,10 +86,14 @@ export default function ChatInterface() {
   const handleSendMessage = (content: string, imageFile?: File) => {
     if (imageFile) {
       setSelectedImage(imageFile);
-      sendMessage(content, imageFile);
+      sendMessage({ content, imageFile }, { 
+        onSuccess: () => {
+          console.log("Message with image sent successfully");
+        }
+      });
     } else {
       setSelectedImage(null);
-      sendMessage(content);
+      sendMessage({ content });
     }
   };
 

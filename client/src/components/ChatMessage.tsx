@@ -7,13 +7,27 @@ interface ChatMessageProps {
   message: Message;
 }
 
-const UserMessage = ({ content }: { content: string }) => (
-  <div className="flex justify-end">
-    <div className="message-user">
-      <p>{content}</p>
+const UserMessage = ({ message }: { message: Message }) => {
+  const { content, hasImage } = message;
+  
+  return (
+    <div className="flex justify-end">
+      <div className="message-user">
+        {hasImage && (
+          <div className="mb-2 text-sm text-gray-600 flex items-center">
+            <span className="mr-1">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </span>
+            <span>Image attached</span>
+          </div>
+        )}
+        <p>{content}</p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AIAvatar = () => (
   <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
@@ -159,7 +173,7 @@ const AIMessage = ({ message }: { message: Message }) => {
 
 export default function ChatMessage({ message }: ChatMessageProps) {
   if (message.role === 'user') {
-    return <UserMessage content={message.content} />;
+    return <UserMessage message={message} />;
   } else {
     return <AIMessage message={message} />;
   }

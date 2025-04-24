@@ -135,13 +135,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Save the AI response to database
       if (completion.choices && completion.choices.length > 0) {
-        const aiResponse = completion.choices[0].message.content;
-        await storage.createMessage({
-          sessionId: currentSessionId,
-          role: 'assistant',
-          content: aiResponse,
-          tokenCount: estimateTokenCount(aiResponse)
-        });
+        const aiResponse: string = completion.choices[0].message.content || "";
+        if (aiResponse) {
+          await storage.createMessage({
+            sessionId: currentSessionId,
+            role: 'assistant',
+            content: aiResponse,
+            tokenCount: estimateTokenCount(aiResponse)
+          });
+        }
       }
       
       // Return the response with sessionId

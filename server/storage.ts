@@ -132,15 +132,11 @@ export class DatabaseStorage implements IStorage {
   async updateSystemPrompt(id: number, promptData: Partial<InsertSystemPrompt>): Promise<SystemPrompt | undefined> {
     // If this is set as default, unset any existing defaults
     if (promptData.isDefault) {
+      // First, unset all defaults
       await db
         .update(systemPrompts)
         .set({ isDefault: false })
-        .where(
-        and(
-          eq(systemPrompts.isDefault, true),
-          eq(systemPrompts.id, id) ? false : true
-        )
-      );
+        .where(eq(systemPrompts.isDefault, true));
     }
     
     const [updatedPrompt] = await db

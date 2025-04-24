@@ -55,15 +55,16 @@ Respond using this template unless the user specifies another:
 
 export async function sendChatMessage(messages: Message[], systemPrompt: string): Promise<ChatCompletionResponse> {
   try {
-    const response = await apiRequest('POST', '/api/chat', {
-      messages: messages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      })),
-      systemPrompt
+    return await apiRequest<ChatCompletionResponse>('/api/chat', {
+      method: 'POST',
+      body: {
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
+        systemPrompt
+      }
     });
-    
-    return await response.json();
   } catch (error) {
     console.error("Error sending chat message:", error);
     throw error;

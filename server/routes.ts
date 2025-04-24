@@ -110,29 +110,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentSessionId = newSession.id;
       }
       
-      // Get the latest user message to save to database
-      const latestUserMessage = messages[messages.length - 1];
-      if (latestUserMessage.role === 'user') {
-        await storage.createMessage({
-          sessionId: currentSessionId,
-          role: latestUserMessage.role,
-          content: latestUserMessage.content,
-          tokenCount: estimateTokenCount(latestUserMessage.content)
-        });
-      }
-      
       // Format messages for OpenAI API
       const formattedMessages = [
         { role: 'system' as const, content: systemPrompt || "" },
         ...messages
       ];
       
-      // Make request to OpenAI API
+      // Make request to OpenAI API and track tokens
       const completion = await openai.chat.completions.create({
         model: "gpt-4o", // Using the latest model
         messages: formattedMessages,
         temperature: 0.7,
       });
+      
+      // Get the latest user message to save to database
+      const latestUserMessage = messages[messages.length - 1];
+      if (latestUserMessage.role === 'user') {
+        // Save the user message with its token count
+        const userTokens = completion.usage?.prompt_tokens || estimateTokenCount(latestUserMessage.content);
+        await storage.createMessage({
+          sessionId: currentSessionId,
+          role: latestUserMessage.role,
+          content: latestUserMessage.content,
+          tokenCount: userTokens
+        });
+      }
+      
+      // Log token usage for monitoring
+      if (completion.usage) {
+        console.log(`Token usage - Prompt: ${completion.usage.prompt_tokens}, Completion: ${completion.usage.completion_tokens}, Total: ${completion.usage.total_tokens}`);
+      }
       
       // Save the AI response to database
       if (completion.choices && completion.choices.length > 0) {
@@ -142,7 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             sessionId: currentSessionId,
             role: 'assistant',
             content: aiResponse,
-            tokenCount: estimateTokenCount(aiResponse)
+            tokenCount: completion.usage?.completion_tokens || estimateTokenCount(aiResponse)
           });
         }
       }

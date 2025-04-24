@@ -1,5 +1,6 @@
 import { Message, ParsedAIResponse } from "@/lib/types";
 import { parseAIResponse } from "@/lib/openai";
+import { estimateTokenCount, calculateTokenCostInINR, formatTokenCost } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 
 interface ChatMessageProps {
@@ -22,26 +23,13 @@ const AIAvatar = () => (
   </div>
 );
 
-const AIMessage = ({ content }: { content: string }) => {
+const AIMessage = ({ message }: { message: Message }) => {
+  const { content } = message;
   const parsedResponse = parseAIResponse(content);
   
-  // Estimate token count (rough approximation)
-  const estimateTokenCount = (text: string) => {
-    // Rough approximation: 1 token ≈ 4 characters for English text
-    return Math.ceil(text.length / 4);
-  };
-  
-  // Calculate estimated cost in INR (based on April 2024 rates)
-  // gpt-4o input: $0.01/1K tokens, output: $0.03/1K tokens
-  // Converting to INR with approximate rate of 1 USD = 83 INR
-  const calculateCost = (tokenCount: number, isInput: boolean = false) => {
-    const ratePerThousandTokens = isInput ? 0.01 : 0.03; // USD per 1K tokens
-    const usdToInr = 83; // Approximate conversion rate
-    return ((tokenCount / 1000) * ratePerThousandTokens * usdToInr).toFixed(2);
-  };
-  
-  const tokenCount = estimateTokenCount(content);
-  const costInInr = calculateCost(tokenCount);
+  // Use token count and cost from message if available, otherwise estimate
+  const tokenCount = message.tokenCount || estimateTokenCount(content);
+  const costInInr = message.costInInr || calculateTokenCostInINR(tokenCount, false);
   
   const copyToClipboard = (text: string, isMarkdown: boolean = false) => {
     navigator.clipboard.writeText(text);
@@ -95,8 +83,9 @@ const AIMessage = ({ content }: { content: string }) => {
     parsedResponse.citations
   ].filter(Boolean).join(' ');
   
-  const fullTokenCount = estimateTokenCount(fullContent);
-  const fullCostInInr = calculateCost(fullTokenCount);
+  // Use the actual token count and cost from the message or the estimated ones
+  const fullTokenCount = tokenCount;
+  const fullCostInInr = costInInr;
   
   return (
     <div className="message-ai">
@@ -172,6 +161,6 @@ export default function ChatMessage({ message }: ChatMessageProps) {
   if (message.role === 'user') {
     return <UserMessage content={message.content} />;
   } else {
-    return <AIMessage content={message.content} />;
+    return <AIMessage message={message} />;
   }
 }

@@ -3,6 +3,8 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  tokenCount?: number;
+  costInInr?: number;
 }
 
 export interface SystemPrompt {
@@ -17,6 +19,12 @@ export interface ChatCompletionResponse {
       content: string;
     };
   }>;
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+  sessionId?: number;
 }
 
 export interface ParsedAIResponse {

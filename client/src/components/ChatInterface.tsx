@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { sendChatMessage, defaultSystemPrompt } from "@/lib/openai";
 import { Message } from "@/lib/types";
+import { estimateTokenCount, calculateTokenCostInINR } from "@/lib/utils";
 import ChatHeader from "./ChatHeader";
 import SystemPrompt from "./SystemPrompt";
 import ChatMessage from "./ChatMessage";
@@ -45,12 +46,17 @@ export default function ChatInterface() {
       const messagesForAPI = [...messages, userMessage];
       const response = await sendChatMessage(messagesForAPI, systemPrompt);
       
-      // Add AI response to messages
+      // Add AI response to messages with token usage information
+      const completionTokens = response.usage?.completion_tokens || estimateTokenCount(response.choices[0].message.content);
+      const promptTokens = response.usage?.prompt_tokens || estimateTokenCount(content);
+      
       const aiMessage: Message = {
         id: uuidv4(),
         role: 'assistant',
         content: response.choices[0].message.content,
-        timestamp: new Date()
+        timestamp: new Date(),
+        tokenCount: completionTokens,
+        costInInr: calculateTokenCostInINR(completionTokens, false)
       };
       
       setMessages(prevMessages => [...prevMessages, aiMessage]);

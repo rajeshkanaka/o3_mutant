@@ -45,9 +45,9 @@ export default function FileChangesManager() {
 
   const { data: fileChanges, isLoading: isLoadingChanges, error: changesError } = useQuery({
     queryKey: ['/api/github/repositories', selectedRepository, 'files'],
-    queryFn: () => selectedRepository 
-      ? apiRequest<GithubFileChange[]>(`/api/github/repositories/${selectedRepository}/files`)
-      : Promise.resolve([]),
+    queryFn: async () => selectedRepository 
+      ? await apiRequest<GithubFileChange[]>(`/api/github/repositories/${selectedRepository}/files`)
+      : [],
     enabled: !!selectedRepository
   });
 

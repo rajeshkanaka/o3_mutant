@@ -57,10 +57,9 @@ const GithubCredentialsManager = () => {
 
   const createCredentialsMutation = useMutation({
     mutationFn: (data: { username: string; token: string }) => 
-      apiRequest('/api/github/credentials', {
+      apiRequest<GithubCredentials>('/api/github/credentials', {
         method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
+        body: data
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/github/credentials'] });
@@ -82,7 +81,7 @@ const GithubCredentialsManager = () => {
 
   const deleteCredentialsMutation = useMutation({
     mutationFn: (id: number) => 
-      apiRequest(`/api/github/credentials/${id}`, { method: 'DELETE' }),
+      apiRequest<void>(`/api/github/credentials/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/github/credentials'] });
       toast({
@@ -236,10 +235,9 @@ const GithubRepositoriesManager = () => {
 
   const addRepositoryMutation = useMutation({
     mutationFn: (data: { owner: string; repo: string; defaultBranch: string; credentialsId: number }) => 
-      apiRequest('/api/github/repositories', {
+      apiRequest<GithubRepository>('/api/github/repositories', {
         method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
+        body: data
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/github/repositories'] });
@@ -262,7 +260,7 @@ const GithubRepositoriesManager = () => {
 
   const deleteRepositoryMutation = useMutation({
     mutationFn: (id: number) => 
-      apiRequest(`/api/github/repositories/${id}`, { method: 'DELETE' }),
+      apiRequest<void>(`/api/github/repositories/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/github/repositories'] });
       toast({
@@ -281,9 +279,8 @@ const GithubRepositoriesManager = () => {
 
   const analyzeRepositoryMutation = useMutation({
     mutationFn: (id: number) => 
-      apiRequest(`/api/github/repositories/${id}/analyze`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+      apiRequest<GithubRepository>(`/api/github/repositories/${id}/analyze`, {
+        method: 'POST'
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/github/repositories'] });

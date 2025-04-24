@@ -88,6 +88,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { messages, systemPrompt, sessionId } = req.body;
       
+      console.log("Received chat request:", { 
+        messageCount: messages?.length, 
+        systemPromptLength: systemPrompt?.length,
+        sessionId 
+      });
+      
       if (!messages || !Array.isArray(messages)) {
         return res.status(400).json({ message: "Invalid messages format" });
       }
@@ -110,11 +116,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentSessionId = newSession.id;
       }
       
+      // Check if OpenAI API key is available
+      if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "dummy_key_for_development") {
+        console.error("Missing or invalid OpenAI API key");
+        return res.status(500).json({ message: "OpenAI API key is not configured" });
+      }
+      
       // Format messages for OpenAI API
       const formattedMessages = [
         { role: 'system' as const, content: systemPrompt || "" },
-        ...messages
+        ...messages.map(m => ({ role: m.role as 'user' | 'assistant' | 'system', content: m.content }))
       ];
+      
+      console.log("Sending request to OpenAI with message count:", formattedMessages.length);
       
       // Make request to OpenAI API and track tokens
       const completion = await openai.chat.completions.create({
@@ -122,6 +136,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messages: formattedMessages,
         temperature: 0.7,
       });
+      
+      console.log("Received response from OpenAI");
       
       // Get the latest user message to save to database
       const latestUserMessage = messages[messages.length - 1];
@@ -155,10 +171,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Return the response with sessionId
-      return res.status(200).json({ 
+      const response = { 
         ...completion, 
         sessionId: currentSessionId 
-      });
+      };
+      
+      console.log("Returning response to client");
+      return res.status(200).json(response);
     } catch (error: any) {
       console.error("Error in chat API:", error);
       
@@ -171,7 +190,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ message: "OpenAI service error" });
       }
       
-      return res.status(500).json({ message: "Failed to process chat request" });
+      return res.status(500).json({ message: "Failed to process chat request", error: error.message });
     }
   });
 

@@ -13,7 +13,7 @@ export default function ChatHeader({ toggleSystemPrompt }: ChatHeaderProps) {
         <img 
           src={logoImage} 
           alt="Astra O3 Logo" 
-          className="h-10 mr-2"
+          className="h-12 mr-2"
         />
       </div>
       <Button 

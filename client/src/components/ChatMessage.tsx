@@ -31,11 +31,11 @@ const UserMessage = ({ message }: { message: Message }) => {
 };
 
 const AIAvatar = () => (
-  <div className="w-8 h-8 rounded-full overflow-hidden">
+  <div className="w-10 h-10 rounded-full overflow-hidden bg-white p-1">
     <img 
       src={logoImage} 
       alt="Astra O3 Avatar" 
-      className="w-full h-full object-cover"
+      className="w-full h-full object-contain"
     />
   </div>
 );
@@ -62,7 +62,7 @@ const AIMessage = ({ message }: { message: Message }) => {
           </div>
           <div className="flex-1">
             <div className="font-medium mb-2 flex items-center justify-between">
-              <span>Astra o3 by Rajesh</span>
+              <span>Astra O3 by Rajesh</span>
               <div className="flex items-center space-x-2">
                 <button 
                   onClick={() => copyToClipboard(content)}
@@ -112,7 +112,7 @@ const AIMessage = ({ message }: { message: Message }) => {
         </div>
         <div className="flex-1">
           <div className="font-medium mb-2 flex items-center justify-between">
-            <span>Astra o3 by Rajesh</span>
+            <span>Astra O3 by Rajesh</span>
             <div className="flex items-center space-x-2">
               <button 
                 onClick={() => copyToClipboard(content)}

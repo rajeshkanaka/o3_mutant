@@ -243,7 +243,7 @@ export class GithubService {
         : [];
       
       // For each major directory, get contents
-      const structureMap = {};
+      const structureMap: Record<string, any[]> = {};
       for (const dir of directories) {
         try {
           const contents = await this.getRepositoryContents(dir);

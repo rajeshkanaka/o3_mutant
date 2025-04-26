@@ -101,7 +101,7 @@ export function registerGithubRoutes(app: Express) {
       githubService.setRepository({
         owner: validatedData.owner,
         repo: validatedData.repo,
-        branch: validatedData.defaultBranch
+        branch: validatedData.defaultBranch ?? undefined
       });
       
       try {
@@ -216,7 +216,7 @@ export function registerGithubRoutes(app: Express) {
       githubService.setRepository({
         owner: repository.owner,
         repo: repository.repo,
-        branch: repository.defaultBranch
+        branch: repository.defaultBranch ?? undefined
       });
       
       // Generate summary
@@ -341,7 +341,7 @@ export function registerGithubRoutes(app: Express) {
       githubService.setRepository({
         owner: repository.owner,
         repo: repository.repo,
-        branch: repository.defaultBranch
+        branch: repository.defaultBranch ?? undefined
       });
       
       // Commit the file
@@ -418,7 +418,7 @@ export function registerGithubRoutes(app: Express) {
       githubService.setRepository({
         owner: repository.owner,
         repo: repository.repo,
-        branch: repository.defaultBranch
+        branch: repository.defaultBranch ?? undefined
       });
       
       // Get file content if fileContext is provided

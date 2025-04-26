@@ -1,11 +1,22 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "target": "ES2017",
+    "module": "CommonJS",
+    "lib": ["dom", "es6", "es2017", "esnext.asynciterable"],
+    "sourceMap": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "types": ["node"],
     "esModuleInterop": true,
-    "outDir": "../dist"
-  },
-  "include": ["./**/*.ts"],
-  "exclude": ["node_modules"]
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "removeComments": true
+  }
 }

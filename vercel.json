@@ -5,7 +5,7 @@
       "src": "server/index.ts",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["server/**"],
+        "includeFiles": ["server/**", "vite.config.ts", "dist/**"],
         "nodeVersion": "22.x"
       }
     }

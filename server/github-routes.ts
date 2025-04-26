@@ -422,7 +422,7 @@ export function registerGithubRoutes(app: Express) {
       });
       
       // Get file content if fileContext is provided
-      let fileContents = {};
+      let fileContents: Record<string, string | undefined> = {};
       if (fileContext && Array.isArray(fileContext)) {
         for (const file of fileContext) {
           try {
@@ -430,7 +430,7 @@ export function registerGithubRoutes(app: Express) {
             fileContents[file] = content;
           } catch (error) {
             console.warn(`Could not get content for file ${file}:`, error);
-            fileContents[file] = null;
+            fileContents[file] = undefined;
           }
         }
       }

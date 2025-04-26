@@ -42,3 +42,4 @@ replit.nix
 
 # Build artifacts
 .drizzle
+.vercel

@@ -294,7 +294,7 @@ export class GithubService {
         readme: readmeContent,
         dependencies: packageJson?.dependencies || {},
         devDependencies: packageJson?.devDependencies || {}
-      };
+      } as Record<string, any>;
       
       // TODO: In a real implementation, we would use OpenAI to analyze this data
       // and generate a comprehensive summary
